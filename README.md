@@ -31,13 +31,6 @@ QA:
 - Terraform instalado
 - Estar en Linux con permisos para usar Docker
 
-Si aparece error de permisos sobre `/var/run/docker.sock`:
-
-```bash
-sudo usermod -aG docker $USER
-newgrp docker
-docker ps
-```
 
 ## 1) Construir imagenes
 
@@ -46,23 +39,9 @@ Desde la raiz del proyecto:
 ```bash
 cd ~/LAb01-Iac-jueves-am
 
-docker build -t lab/api ./src/api
-docker build -t lab/web ./src/web01
-```
-
-Para base de datos, crear una imagen local `lab/db`:
-
-```bash
-mkdir -p ./src/db
-cat > ./src/db/Dockerfile <<'EOF'
-FROM postgres:16-alpine
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=postgres
-ENV POSTGRES_DB=app
-EXPOSE 5432
-EOF
-
-docker build -t lab/db ./src/db
+docker build -t lab/api .
+docker build -t lab/web .
+docker build -t lab/db .
 ```
 
 ## 2) Inicializar Terraform
@@ -75,39 +54,31 @@ terraform init
 ## 3) Levantar ambiente DEV
 
 ```bash
-terraform workspace select dev || terraform workspace new dev
-terraform validate
-terraform plan -var-file=terraform.tfvars
-terraform apply -var-file=terraform.tfvars
+terraform workspace new dev
+terraform plan
+terraform apply 
 ```
 
 ## 4) Verificar ambiente DEV
 
 ```bash
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+docker ps
 curl http://localhost:4001
 curl http://localhost:4002
 nc -zv localhost 4003
 ```
 
-Notas:
-
-- El puerto de DB (`4003`) no abre en navegador porque Postgres no es HTTP.
-- Para DB se valida conectividad de puerto TCP con `nc`.
-
 ## 5) Levantar ambiente QA
 
 ```bash
 terraform workspace select qa || terraform workspace new qa
-terraform validate
-terraform plan -var-file=terraform.tfvars
-terraform apply -var-file=terraform.tfvars
-```
+terraform plan 
+terraform apply 
 
 ## 6) Verificar ambiente QA
 
 ```bash
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+docker ps
 curl http://localhost:5001
 curl http://localhost:5002
 nc -zv localhost 5003
