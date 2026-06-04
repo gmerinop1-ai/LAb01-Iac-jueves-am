@@ -10,7 +10,9 @@ jobs:
 
     steps:
       - name: Saludo desde main
+        if: github.ref == 'refs/heads/main'
         run: echo "Hola desde main, mi nombre es Grezia Merino"
 
       - name: Saludo desde develop
-        run: echo "Hola desde develop, mi nombre es Zaleth Pèrez" 
+        if: github.ref == 'refs/heads/develop'
+        run: echo "Hola desde develop, mi nombre es Grezia Pèrez" 
