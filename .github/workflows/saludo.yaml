@@ -1,20 +1,19 @@
-name: saludo
-env: 
-    name: Grezia
-
+name: Saludo
 on:
   push:
     branches:
       - main
       - develop
+env:
+  name: Grezia
 jobs:
   saludo:
     runs-on: ubuntu-latest
     steps:
-      - name: Saludo desde main 
-      - run: echo "hola desde main, soy ${{ env.name }}"
-      - if: github.ref == 'refs/heads/main'
-
-      - name: Saludo desde develop 
-      - if: github.ref == 'refs/heads/develop'
-      - run: echo "hola desde develop, ${{ env.name }}"
+      - name: Saludo desde main
+        run: echo "¡Hola, desde main soy ${{ env.name }}"
+        if: github.ref == 'refs/heads/main'
+        
+      - name: Saludo desde develop
+        run: echo "¡Hola, desde develop soy ${{ env.name }}"
+        if: github.ref == 'refs/heads/develop'
